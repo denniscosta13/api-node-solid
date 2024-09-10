@@ -122,3 +122,22 @@ Nesse caso, tudo que importamos utilizando `@/` entende que iremos importar algo
       "@/*": ["./src/*"]
     }
 ```
+
+## Prisma
+
+Para trabalhar com o prisma, primeiro isntalamos a dependencia de desenvolvimento e executamos o init.
+Será criada uma pasta `prisma` e um arquivo `schema.prisma` com algumas configrações, inclusive das nossas tabelas
+
+```sh
+npm i -D prisma
+
+npx prisma init
+```
+
+Também precisamos instalar um package para produção
+
+```sh
+npm i @prisma/client
+
+```
+
