@@ -482,3 +482,17 @@ class registerUseCase {
     constructor(private usersRepository: any) {}
 }
 ```
+
+## Errors
+
+No inicio do desenvolvimento, podemos lançar um erro genérico com:
+
+```js
+throw new Error('Error')
+```
+
+Mas, depois quando a aplicação tiver mais regras implementadas, queremos informar o erro certo e que ajude o usuário
+a lidar com ele.
+
+Para isso, podemos criar várias classes que herdam a classe `Error`. Dessa forma, podemos validar o tipo de erro e
+retornar uma resposta e `statusCode` adequado.

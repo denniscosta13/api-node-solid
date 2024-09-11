@@ -1,6 +1,6 @@
-import { prisma } from "@/lib/prisma"
 import { UsersRepository } from "@/repositories/interface-users-repository"
 import { hash } from "bcryptjs"
+import { UserAlreadyExistsError } from "./errors/user-already-exists-error"
 
 
 // typescript
@@ -42,7 +42,7 @@ export class RegisterUseCase {
     
             //por isso, caso tenha um usuário com o mesmo email, lançamos um erro
             //o controller deve lidar com esse erro
-            throw new Error('E-mail already exists.')
+            throw new UserAlreadyExistsError()
         }
     
         //agora temos um repository, ou seja, uma classe responsável pela comunicação com o banco de dados
