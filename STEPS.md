@@ -312,3 +312,18 @@ model User {
 ## Controller
 
 Controller lida e manipula entrada de dados de request e da uma reposta.
+
+No caminho `src/http/controllers` criamos nosso primeiro controller, para lidar com o registro de novos usuários.
+
+Para ter uma boa ideia do que estamos fazendo e da lógica aplicada, é bom iniciar criando toda a logica no controller:
+
+- recebe request
+- valida se os dados recebidos estão corretos
+- verifica se não tem outro registro com mesmo email
+- faz o hash da senha
+- e por fim salva o registro válido no banco de dados
+
+Dessa forma, fica mais fácil entender o fluxo da aplicação, porém, depois vamos separar alguns pedaços desse controler,
+já que são pedaços que sempre se repetem, independente de como esse controler lida com a informação.
+
+Futuramente, esse trecho de código vai ser separado em um useCase ou Service, o que fizer mais sentido pra aplicação.
