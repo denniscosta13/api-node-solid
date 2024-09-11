@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify"
 import { z } from "zod"
-import { registerUseCase } from "@/use-cases/register"
+import { RegisterUseCase } from "@/use-cases/register"
+import { PrismaUsersRepository } from "@/repositories/prisma-users-repository"
 
 export async function register(request: FastifyRequest, reply: FastifyReply)  {
 
@@ -18,7 +19,10 @@ export async function register(request: FastifyRequest, reply: FastifyReply)  {
     // bloco try catch é necessário já que o use-case pode lançar um erro
     // o controller tem a responsabilidade de lidar com esse erro e decidir o que fazer com a aplicação
     try {
-        await registerUseCase( { name, email, password } )
+        const prismaUsersRepository = new PrismaUsersRepository()
+        const registerUseCase = new RegisterUseCase(prismaUsersRepository)
+
+        await registerUseCase.execute( { name, email, password } )
     } catch {
         return reply.status(409).send()
     }

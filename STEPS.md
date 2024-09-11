@@ -399,6 +399,7 @@ export async function registerUseCase({
         throw new Error('E-mail already exists.')
     }
 
+    //vai ser separado para um repository mais adiante
     await prisma.user.create({
         data: {
             name,
@@ -444,5 +445,40 @@ export class PrismaUsersRepository {
 
         return user
     }
+}
+```
+
+## SOLID
+
+### [D]ependency Inversion Principle
+
+O objetivo aqui é inverter a dependência.
+
+Hoje, o use-case é responsável por criar uma instância do repository pra utilizar ele. Não queremos que a criação do
+objeto fique a cargo do use-case. Isso pode ser um problema no futuro, caso seja necessário fazer alguma alteração de
+repository ou algo do tipo.
+
+Por isso, vamos transformar a função use-case em uma classe use-case. Essa classe vai receber no seu contrutor a instancia
+de um repository já criada por outra classe que ficará responsável só por isso e não mais pelo use-case;
+
+Há duas formas de fazer a classe recebendo a instancia no construtor, o modo padrão e um hack do TypeScript:
+
+- Padrão:
+
+```js
+class registerUseCase {
+    private _usersRepository: any
+
+    constructor(usersRepository: any) {
+        this._usersRepository = usersRepository
+    }
+}
+```
+
+- TypeScript:
+
+```js
+class registerUseCase {
+    constructor(private usersRepository: any) {}
 }
 ```
