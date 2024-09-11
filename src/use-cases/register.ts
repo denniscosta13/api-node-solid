@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { UsersRepository } from "@/repositories/interface-users-repository"
 import { hash } from "bcryptjs"
 
 
@@ -12,7 +13,7 @@ interface RegisterUseCaseRequest {
 
 export class RegisterUseCase {
     
-    constructor(private usersRepository: any) {}
+    constructor(private usersRepository: UsersRepository) {}
 
     async execute({ 
         name, 
@@ -28,12 +29,8 @@ export class RegisterUseCase {
         //regra de negócio
         //antes de fazer o registro de novo usuário, precisamos verificar se já não existe um outro com o mesmo email
         //fazemos uma busca com o prisma na tabela user filtrando o email enviado na request
-        const userWithSameEmail = await prisma.user.findUnique({
-            where: {
-                email,
-            }
-        })
-    
+        const userWithSameEmail = await this.usersRepository.findByEmail(email)
+        
         //se o select do prisma encontrar dados, essa variavel vai ser true, entrando no if
         //como já existe um usuario com o mesmo email cadastrado, lançamos a exceção pro controller lidar
         //caso contrário, feita a validação de que não tem outro usuário com o mesmo email cadastrado, seguimos pro registro
