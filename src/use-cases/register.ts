@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { PrismaUsersRepository } from "@/repositories/prisma-users-repository"
 import { hash } from "bcryptjs"
 
 // typescript
@@ -43,11 +44,14 @@ export async function registerUseCase({
         throw new Error('E-mail already exists.')
     }
 
-    await prisma.user.create({
-        data: {
-            name,
-            email,
-            password_hash
-        }
+    //agora temos um repository, ou seja, uma classe responsável pela comunicação com o banco de dados
+    //atraves dela podemos realizar transacoes por meio de uma instancia dessa classe
+    //futuramente não iremos criar uma instancia aqui, utilizaremos inversão de dependencia
+    const prismaUsersRepository = new PrismaUsersRepository()
+
+    await prismaUsersRepository.create({
+        name,
+        email,
+        password_hash
     })
 }

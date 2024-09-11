@@ -408,3 +408,41 @@ export async function registerUseCase({
     })
 }
 ```
+
+## Repository pattern
+
+Abstrair a comunicação com o banco de dados em um arquivo separado
+
+Todas as transações com banco de dados, vão passar pelo repository
+
+### Prisma types
+
+Quando criamos nossos `models` no Prisma, ele cria também vários `types` de cada `model` que tem o formato
+exato dos dados que precisamos quando estamos trabalhando com um `model` em questão.
+
+Uma das vantagens de separar a conexão com o banco de dados nos ajuda na manutenção, caso no futuro, precisemos alterar o banco de dados ou
+tecnologia usada para acessar esse banco de dados.
+
+Fazer esse import, nos da acesso a esses types dentro de `Prisma` que pode ser usados para definir o tipo das nossas
+variáveis.
+
+```js
+import { Prisma } from "@prisma/client"
+```
+
+Exemplo:
+
+```js
+import { prisma } from "@/lib/prisma"
+import { Prisma } from "@prisma/client"
+
+export class PrismaUsersRepository {
+    async create(data: Prisma.UserCreateInput) {
+        const user = await prisma.user.create({
+            data
+        })
+
+        return user
+    }
+}
+```
