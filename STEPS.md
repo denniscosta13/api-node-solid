@@ -309,3 +309,6 @@ model User {
 }
 ```
 
+## Controller
+
+Controller lida e manipula entrada de dados de request e da uma reposta.
