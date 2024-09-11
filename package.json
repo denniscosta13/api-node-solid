@@ -1,7 +1,7 @@
 {
   "name": "api-node-solid",
   "version": "1.0.0",
-  "description": "## Requisitos Funcionais",
+  "description": "API Solid",
   "main": "index.js",
   "scripts": {
     "start:dev": "tsx watch src/server.ts",
