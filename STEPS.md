@@ -496,3 +496,11 @@ a lidar com ele.
 
 Para isso, podemos criar várias classes que herdam a classe `Error`. Dessa forma, podemos validar o tipo de erro e
 retornar uma resposta e `statusCode` adequado.
+
+### Fastify Global Error Handler
+
+O fastify tem uma função para tratar erros de forma global - `setErrorHandler`
+Ela consegue capturar o erro, request e reply.
+
+Por enquanto, caso seja um erro de validação do Zod, essa função vai tratar o erro e últimos casos,
+vai lançar um Internal Server Error 500.
