@@ -54,6 +54,7 @@ Se os testes passarem, ele abre um pull request no repo sugerindo a atualizaçã
 ```js
 save-exact=true
 ```
+> Uma alternativa é passar --save quando for instalar um package com npm
 
 ## Fastify
 
@@ -70,7 +71,7 @@ Instalar a biblioteca `dotenv` que expõe a variável `process.env` do nosso sis
 npm i dotenv
 ```
 
-Para organizar melhor, criamos uma pasata `env` dentro de `src` e criamos o arquivo `index.ts`:
+Para organizar melhor, criamos uma pasta `env` dentro de `src` e criamos o arquivo `index.ts`:
 
 ```js
 import 'dontenv/config'
@@ -96,7 +97,7 @@ const envSchema = z.object({
 ```
 
 Feito isso, utilizamos a função `safeParse` do schema, que recebe como parametro nosso `process.env`. Salvamos essa
-validação numa variávei, que é possível verificar se teve sucesso, em caso de erro, nos dá o erro e se passou na validação
+validação numa variável, que é possível verificar se teve sucesso, em caso de erro, nos dá o erro e se passou na validação
 conseguimos acessar seu atributo `data` que contem as variáveis.
 
 ```js
@@ -125,8 +126,9 @@ Nesse caso, tudo que importamos utilizando `@/` entende que iremos importar algo
 
 ## Docker
 
-Criando imagem de bitnami/postgres
+Criando imagem de `bitnami/postgres`
 
+#### docker run
 ```sh
 docker run --name api-solid-pg -e POSTGRESQL-USERNAME=docker -e POSTGRESQL_PASSWORD=docker -e POSTGRESQL_DATABASE=apisolid -p 5432:5432 bitnami/postgresql
 ```
@@ -134,7 +136,7 @@ docker run --name api-solid-pg -e POSTGRESQL-USERNAME=docker -e POSTGRESQL_PASSW
 Listar containers:
 
 ```sh
-  docker ps #lista todos containers rodando
+  docker ps #lista todos containers ativos
 
   docker ps -a #lista todos os container ativos e inativos
 ```
@@ -166,6 +168,7 @@ Logs:
 ## Docker compose
 
 Serve para definir as configurações dos containers necessários, útil para migrar o sistema.
+O arquivo transcreve o comando inicial `run` com os parâmetros passados [aqui](#docker-run).
 
 Ai quando quisermos subir o container num novo ambiente, utilizamos o comando:
 
@@ -185,6 +188,22 @@ Para PAUSAR o container
 docker compose stop #-d é dettached, ou seja, no background
 ```
 
+`docker-compose.yaml`:
+
+```yaml
+version: '3'
+
+services:
+  api-solid-pg:
+    image: bitnami/postgresql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRESQL-USERNAME=postgres
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=apisolid
+```
+
 ## Prisma (instalar plugin do vscode)
 
 Para trabalhar com o prisma, primeiro isntalamos a dependencia de desenvolvimento e executamos o init.
@@ -200,14 +219,12 @@ Também precisamos instalar um package para produção
 
 ```sh
 npm i @prisma/client
-
 ```
 
 Com o container do docker configurado e rodando, verificar no `.env` a variável `DATABASE_URL` e executar o seguinte comando:
 
 ```sh
 npx prisma migrate dev
-
 ```
 Esse comando irá gerar as migrations do banco de dados, criar as tabelas encontrados em `schema.prisma` e realizar
 o que mais for necessário para migration
