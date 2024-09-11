@@ -326,4 +326,85 @@ Para ter uma boa ideia do que estamos fazendo e da lógica aplicada, é bom inic
 Dessa forma, fica mais fácil entender o fluxo da aplicação, porém, depois vamos separar alguns pedaços desse controler,
 já que são pedaços que sempre se repetem, independente de como esse controler lida com a informação.
 
-Futuramente, esse trecho de código vai ser separado em um useCase ou Service, o que fizer mais sentido pra aplicação.
+Esse trecho de código vai ser separado em um useCase ou Service, o que fizer mais sentido pra aplicação.
+
+Exemplo inicial de Controller:
+
+```js
+import { FastifyRequest, FastifyReply } from "fastify"
+import { z } from "zod"
+import { registerUseCase } from "@/use-cases/register" //importa o use-case
+
+export async function register(request: FastifyRequest, reply: FastifyReply)  {
+    const registerBodySchema = z.object({
+        name: z.string(),
+        email: z.string(),
+        password: z.string().min(6)
+    })
+
+    const { name, email, password } = registerBodySchema.parse(request.body)
+
+    try {
+        await registerUseCase( { name, email, password } ) // utiliza o use-case para manipular os dados de forma lógica
+    } catch {
+        return reply.status(409).send()
+    }
+
+    return reply.status(201).send()
+}
+```
+
+## Use Case
+
+Os use-cases contém a parte lógica de uma funcionalidade, sem depender de um contexto específico. O use-case não utiliza
+de recursos de HTTP requests (fastify).
+
+Com o use-case, não precisamos acessar uma rota para poder aplicar a logica do use-case, ela pode ser usada sempre que
+preciso independente sé uma requisição HTTP, basta apenas preencher o parametros necessários.
+
+O compromisso dele é receber os dados necessários, aplicar a lógica, persistindo ou recuperando do banco de dados e devolver
+a resposta esperada.
+
+Exemplo inicial de um use-case:
+
+```js
+import { prisma } from "@/lib/prisma"
+import { hash } from "bcryptjs"
+
+interface RegisterUseCaseRequest {
+    name: string
+    email: string
+    password: string
+}
+
+export async function registerUseCase({ 
+    name, 
+    email,
+    password 
+} : RegisterUseCaseRequest) {
+    const password_hash = await hash(password, 6)
+
+    const userWithSameEmail = await prisma.user.findUnique({
+        where: {
+            email,
+        }
+    })
+
+    if(userWithSameEmail) {
+        // nao faz sentido usar o reply, isso é de um contexto HTTP do fastify
+        // a ideia do use-case é lidar com qualquer tipo de envio de dados, seja HTTP ou outros tipos
+        // entao nao podemos utilizar um contexto unico, precisamos ser mais generalistas nesse caso
+        // -------- return reply.status(409).send() 
+
+        throw new Error('E-mail already exists.')
+    }
+
+    await prisma.user.create({
+        data: {
+            name,
+            email,
+            password_hash
+        }
+    })
+}
+```

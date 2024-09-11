@@ -1,3 +1,6 @@
+// define os parametros do client do prisma e exporta a instancia
+// usamos essa instancia para realizar as transacoes do banco de dados
+
 import { env } from "@/env";
 import { PrismaClient } from "@prisma/client";
 
