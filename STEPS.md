@@ -504,3 +504,15 @@ Ela consegue capturar o erro, request e reply.
 
 Por enquanto, caso seja um erro de validação do Zod, essa função vai tratar o erro e últimos casos,
 vai lançar um Internal Server Error 500.
+
+## Testes
+
+No backend, é ideal começar a trabalhar com os testes logo de inicio, assim já podemos testar a regra de negócio e 
+adaptar nosso código para evitar erros.
+
+```sh
+npm i vitest vite-tsconfig-paths -D
+```
+
+O package `vite-tsconfig-paths` serve pra ele entender o `@/` que configuramos como apelido nas importações do src.
+Passamos essa configuracao em vite.config.ts
