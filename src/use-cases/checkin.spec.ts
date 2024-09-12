@@ -61,10 +61,7 @@ describe('Check In Use Case', () => {
             userId: 'user-01'
         })
 
-        const checkInPromise = await sut.execute({
-            gymId: 'gym-01',
-            userId: 'user-01'
-        })
+        vi.setSystemTime(new Date(2024, 8, 13, 16, 20))
 
         await expect(
             sut.execute({
