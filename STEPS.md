@@ -528,3 +528,27 @@ no banco de dados, mantemos os dados em memória, aplicamos a lógica e testamos
 
 Como os testes unitários são a base da pirâmide, ou seja, teremos muitos desses testes, eles precisam ser rápidos.
 Utilizando um repository em memória aumenta muito a performance.
+
+### Vitest Coverage
+
+Ajuda a ter uma noção do que estamos cobrindo com os testes.
+Script adicionado ao `package.json`:
+
+```js
+"test:coverage": "vitest --coverage"
+```
+
+### Vitest UI
+
+Temos um UI do Vitest também, caso prefira algo mais visual:
+
+Instalar:
+```sh
+npm i -D @vitest/ui
+```
+
+Adicionado ao `package.json`:
+
+```js
+"test:ui": "vitest --ui"
+```
