@@ -10,7 +10,7 @@ interface CheckInUseCaseResponse {
     checkIn: CheckIn
 }
 
-export class CheckInenticateUseCase {
+export class CheckInUseCase {
     constructor(private checkInsRepository: CheckInsRepository) {}
 
     async execute( { userId, gymId }: CheckInUseCaseRequest): Promise<CheckInUseCaseResponse> {
