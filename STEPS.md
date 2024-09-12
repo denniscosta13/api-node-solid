@@ -553,13 +553,6 @@ Adicionado ao `package.json`:
 "test:ui": "vitest --ui"
 ```
 
-## Use Case pt.2
-
-Apesar de ter dito que era melhor construir a lógica toda no controller e depois ir dividindo. O Diego sugere iniciar o
-desenvolvimento do código pelos use-cases, já que é o nível mais baixo do código e já de inicio pode ter testes unitários.
-
-O controller só permite que a gente acesse o caso de uso por uma rota, então não necessariamente precisamos dele pra testar
-nossa lógica e regras de negócio.
 
 ## Factory Design Pattern
 
@@ -582,3 +575,13 @@ export function makeRegisterUseCase() {
     return registerUseCase
 }
 ```
+
+## Use Case pt.2
+
+Apesar de ter dito que era melhor construir a lógica toda no controller e depois ir dividindo. O Diego sugere iniciar o
+desenvolvimento do código pelos use-cases, já que é o nível mais baixo do código e já de inicio pode ter testes unitários.
+
+O controller só permite que a gente acesse o caso de uso por uma rota, então não necessariamente precisamos dele pra testar
+nossa lógica e regras de negócio.
+
+Portanto, podemos focar em contruir os use-cases e depois mais pra frente implementamos a parte de infraestrutura http
