@@ -3,7 +3,6 @@ import { RegisterUseCase } from "./register"
 import { compare } from "bcryptjs"
 import { inMemoryUsersRepository } from "@/repositories/in-memory/in-memory-users-repository"
 import { UserAlreadyExistsError } from "./errors/user-already-exists-error"
-import { string } from "zod"
 
 describe('Register Use Case', () => {
     it('should hash user password on registration', async () => {
