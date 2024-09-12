@@ -560,3 +560,25 @@ desenvolvimento do código pelos use-cases, já que é o nível mais baixo do c�
 
 O controller só permite que a gente acesse o caso de uso por uma rota, então não necessariamente precisamos dele pra testar
 nossa lógica e regras de negócio.
+
+## Factory Design Pattern
+
+Sempre que precisamos de um `use-case` nos controllers, além de instanciar o `use-case` também precisamos instanciar
+um `repository`.
+
+Portanto, podemos criar uma `factory` que nada mais é que um função que quando chamada, irá instanciar as duas classes e
+retornar o `use-case`.
+
+Exemplo:
+
+```js
+import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
+import { RegisterUseCase } from "../register";
+
+export function makeRegisterUseCase() {
+    const usersRepository = new PrismaUsersRepository()
+    const registerUseCase = new RegisterUseCase(usersRepository)
+
+    return registerUseCase
+}
+```

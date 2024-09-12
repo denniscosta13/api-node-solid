@@ -1,8 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify"
 import { z } from "zod"
-import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository"
-import { AuthenticateUseCase } from "@/use-cases/authenticate-use-case"
 import { InvalidCredentialsError } from "@/use-cases/errors/invalid-credentials-error"
+import { makeAuthenticateUseCase } from "@/use-cases/factories/make-authenticate-use-case"
 
 export async function authenticate(request: FastifyRequest, reply: FastifyReply)  {
 
@@ -19,8 +18,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
     // bloco try catch é necessário já que o use-case pode lançar um erro
     // o controller tem a responsabilidade de lidar com esse erro e decidir o que fazer com a aplicação
     try {
-        const prismaUsersRepository = new PrismaUsersRepository()
-        const authenticateUseCase = new AuthenticateUseCase(prismaUsersRepository)
+        const authenticateUseCase = makeAuthenticateUseCase()
 
         await authenticateUseCase.execute( { email, password } )
     } catch (err) {
