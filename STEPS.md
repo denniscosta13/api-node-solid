@@ -516,3 +516,13 @@ npm i vitest vite-tsconfig-paths -D
 
 O package `vite-tsconfig-paths` serve pra ele entender o `@/` que configuramos como apelido nas importações do src.
 Passamos essa configuracao em vite.config.ts
+
+### Testes unitário
+
+Nos tests unitário, precisamos escrever eles sem dependências, inclusive de banco de dados. Caso o teste unitário
+acesse o banco de dados para testar, já não é mais um teste unitário, pois ele testa a integração da conexão do banco
+juntamente com outra funcionalidade do teste em questão.
+
+Como nosso código está desacoplado minimamente, é realizar o teste com os dados em memória. Ao invés de fazer uma transação
+no banco de dados, mantemos os dados em memória, aplicamos a lógica e testamos se a lógica manipulou o retornou o esperado.
+

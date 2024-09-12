@@ -1,6 +1,7 @@
 import { UsersRepository } from "@/repositories/interface-users-repository"
 import { hash } from "bcryptjs"
 import { UserAlreadyExistsError } from "./errors/user-already-exists-error"
+import { User } from "@prisma/client"
 
 
 // typescript
@@ -11,6 +12,10 @@ interface RegisterUseCaseRequest {
     password: string
 }
 
+interface RegisterUseCaseResponse {
+    user: User
+}
+
 export class RegisterUseCase {
     
     constructor(private usersRepository: UsersRepository) {}
@@ -19,7 +24,7 @@ export class RegisterUseCase {
         name, 
         email,
         password 
-    } : RegisterUseCaseRequest) {
+    } : RegisterUseCaseRequest): Promise<RegisterUseCaseResponse> {
     
         // o password enviado para cadastro é hasheado por 6 vezes e salvo no banco de dados dessa forma
         // no login, fazemos o hash por 6 vezes da senha informada e comparamos com a salva no banco
@@ -50,10 +55,12 @@ export class RegisterUseCase {
         //futuramente não iremos criar uma instancia aqui, utilizaremos inversão de dependencia
         //const prismaUsersRepository = new PrismaUsersRepository()
     
-        await this.usersRepository.create({
+        const user = await this.usersRepository.create({
             name,
             email,
             password_hash
         })
+
+        return { user }
     }
 }
