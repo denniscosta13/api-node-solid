@@ -552,3 +552,11 @@ Adicionado ao `package.json`:
 ```js
 "test:ui": "vitest --ui"
 ```
+
+## Use Case pt.2
+
+Apesar de ter dito que era melhor construir a lógica toda no controller e depois ir dividindo. O Diego sugere iniciar o
+desenvolvimento do código pelos use-cases, já que é o nível mais baixo do código e já de inicio pode ter testes unitários.
+
+O controller só permite que a gente acesse o caso de uso por uma rota, então não necessariamente precisamos dele pra testar
+nossa lógica e regras de negócio.

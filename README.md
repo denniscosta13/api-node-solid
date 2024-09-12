@@ -2,7 +2,7 @@
 
 ## Requisitos Funcionais
 
-- [ ] Dever ser possível se cadastrar;
+- [x] Dever ser possível se cadastrar;
 - [ ] Dever ser possível se autenticar;
 - [ ] Dever ser possível obter o perfil de um usuário logado;
 - [ ] Dever ser possível obter o número de check-ins realizados pelo usuário logado;
@@ -15,7 +15,7 @@
 
 ## Regras de negócio
 
-- [ ] O usuário não deve poder se cadastrar com um e-mail duplicado;
+- [x] O usuário não deve poder se cadastrar com um e-mail duplicado;
 - [ ] O usuário não pode fazer check-in no mesmo dia;
 - [ ] O usuário não pode fazer check-in se não tiver perto (100m) da academia;
 - [ ] O check-in só pode ser validado até 20 minutos após criado;
@@ -24,7 +24,7 @@
 
 ## Requisitos não funcionais
 
-- [ ] A senha do usuário precisa estar criptografada;
+- [x] A senha do usuário precisa estar criptografada;
 - [ ] Os dados da aplicação precisam estar persistidos em um banco PostgreSQL;
 - [ ] Todas listas de dados precisam estar paginadas com 20 itens por páginas;
 - [ ] O usuário deve ser identificado por um JWT (JSON Web Token)
