@@ -526,3 +526,5 @@ juntamente com outra funcionalidade do teste em questão.
 Como nosso código está desacoplado minimamente, é realizar o teste com os dados em memória. Ao invés de fazer uma transação
 no banco de dados, mantemos os dados em memória, aplicamos a lógica e testamos se a lógica manipulou o retornou o esperado.
 
+Como os testes unitários são a base da pirâmide, ou seja, teremos muitos desses testes, eles precisam ser rápidos.
+Utilizando um repository em memória aumenta muito a performance.
