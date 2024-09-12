@@ -585,3 +585,22 @@ O controller só permite que a gente acesse o caso de uso por uma rota, então n
 nossa lógica e regras de negócio.
 
 Portanto, podemos focar em contruir os use-cases e depois mais pra frente implementamos a parte de infraestrutura http
+
+## TDD - Test-Drive Development
+
+É desenvolver as regras e casos de usos a partir dos testes. Então primeiro a gente implemente o teste de uma regra e
+depois leva ela para o código de fato.
+
+Sempre que possível, criar o teste unitário mais específico possível, mesmo que precise de vários testes.
+
+### Red
+
+Primeiro estágio do TDD, quando o teste da erro ou não retorna o resultado esperado.
+
+### Green
+
+Desenvolver o minimo de código possível para passar no teste.
+
+### Refactor
+
+Caso os testes alcancem o `green`, então nós refatoramos o código para melhor.
