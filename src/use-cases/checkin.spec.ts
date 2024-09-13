@@ -6,6 +6,8 @@ import { inMemoryGymsRepository } from "@/repositories/in-memory/in-memory-gyms-
 import { GymsRepository } from "@/repositories/interface-gyms-repository"
 
 import { Decimal } from "@prisma/client/runtime/library"
+import { DailyCheckInLimitError } from "./errors/daily-checkin-error"
+import { MaxDistanceError } from "./errors/max-distance-error"
 
 
 
@@ -70,7 +72,7 @@ describe('Check In Use Case', () => {
                 userLatitude: -23.592899,
                 userLongitude: -46.6790186
             })
-        ).rejects.toBeInstanceOf(Error)
+        ).rejects.toBeInstanceOf(DailyCheckInLimitError)
         
     })
 
@@ -108,7 +110,7 @@ describe('Check In Use Case', () => {
                 userLatitude: -23.5903343,
                 userLongitude: -46.6784011
             }),
-        ).rejects.toBeInstanceOf(Error)
+        ).rejects.toBeInstanceOf(MaxDistanceError)
 
     })
     
