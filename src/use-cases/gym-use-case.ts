@@ -1,5 +1,5 @@
 import { GymsRepository } from "@/repositories/interface-gyms-repository"
-import { Gym, Prisma } from "@prisma/client"
+import { Gym } from "@prisma/client"
 
 
 interface GymUseCaseRequest {

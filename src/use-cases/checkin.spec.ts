@@ -1,10 +1,7 @@
 import { it, expect, describe, beforeEach, vi, afterEach } from "vitest"
-import { CheckInsRepository } from "@/repositories/interface-checkins-repository"
 import { CheckInUseCase } from "./checkin-use-case"
 import { inMemoryCheckInsRepository } from "@/repositories/in-memory/in-memory-checkins-repository"
 import { inMemoryGymsRepository } from "@/repositories/in-memory/in-memory-gyms-repository"
-import { GymsRepository } from "@/repositories/interface-gyms-repository"
-
 import { Decimal } from "@prisma/client/runtime/library"
 import { DailyCheckInLimitError } from "./errors/daily-checkin-error"
 import { MaxDistanceError } from "./errors/max-distance-error"
