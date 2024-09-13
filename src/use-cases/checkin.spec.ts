@@ -99,15 +99,14 @@ describe('Check In Use Case', () => {
 
     it('should not be able to check in far from gym', async () => {
         
-        gymsRepository.items.push({
+        await gymsRepository.create({
             id: 'gym-02',
             title: 'Academia Bola de Ferro',
             description: '',
             phone: '',
-            latitude: new Decimal(-23.5955046),
-            longitude: new Decimal(-46.6865803)
+            latitude: -23.5955046,
+            longitude: -46.6865803 
         })
-
 
         await expect(() => 
             sut.execute({
