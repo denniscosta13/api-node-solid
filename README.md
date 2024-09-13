@@ -11,7 +11,7 @@
 - [ ] Dever ser possível o usuário buscar academias pelo nome;
 - [x] Dever ser possível o usuário realizar check-in em uma academia;
 - [ ] Dever ser possível validar o check-in de um usuário;
-- [ ] Dever ser possível cadastrar uma academia;
+- [x] Dever ser possível cadastrar uma academia;
 
 ## Regras de negócio
 

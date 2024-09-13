@@ -15,12 +15,12 @@ let sut: CheckInUseCase
 
 describe('Check In Use Case', () => {
 
-    beforeEach(()=> {
+    beforeEach(async ()=> {
         checkInRespository = new inMemoryCheckInsRepository()
         gymsRepository = new inMemoryGymsRepository()
         sut = new CheckInUseCase(checkInRespository, gymsRepository)
-
-        gymsRepository.items.push({
+        
+        await gymsRepository.create({
             id: 'gym-01',
             title: 'Academia Bola de Ferro',
             description: '',
@@ -28,6 +28,7 @@ describe('Check In Use Case', () => {
             latitude: new Decimal(-23.592899),
             longitude: new Decimal(-46.6790186)
         })
+
 
         vi.useFakeTimers()
     })
@@ -99,14 +100,6 @@ describe('Check In Use Case', () => {
 
     it('should not be able to check in far from gym', async () => {
         
-        await gymsRepository.create({
-            id: 'gym-02',
-            title: 'Academia Bola de Ferro',
-            description: '',
-            phone: '',
-            latitude: -23.5955046,
-            longitude: -46.6865803 
-        })
 
         await expect(() => 
             sut.execute({
