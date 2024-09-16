@@ -716,3 +716,182 @@ const envSchema = z.object({
 })
 ```
 
+### Fluxo
+
+Basicamente, o fluxo de autenticação funciona da seguinte forma:
+
+- O usuário envia as informações de login (vamos considerar que sejam válidas)
+- O backend valida usuário e senha com sucesso e cria um token e o devolve na reply. Passamos dentro do token o `id` do usuário logado, que vai encodado em `base64`:
+
+```js
+const token = await reply.jwtSign({}, {
+          sign: {
+              sub: user.id
+          }
+      })
+
+return reply.status(200).send({
+        token
+    })
+```
+- O front armazena esse token: `localStorage` ou `Cookies`
+- Para rotas que precisam de autenticação, nós adicionamos um middleware que irá fazer a verificação do `JWT` que será enviado no Header da request `Authorization: Bearer Token`: 
+
+```js
+  // ./middlewares/verify-jwt.ts
+  try {
+      await request.jwtVerify()
+  } catch (error) {
+      return reply.status(401).send({
+          message: 'Unauthorized.'
+      })
+  }
+  ```
+- Caso o JWT seja válido, ele encaminha para a rota de destino através do controller
+- Na rota de destino, nós recuperamos da request o `id` do usuário que estava encodado dentro do token, esse `id` fica disponível em `request.user.sub` além de outras informações do payload, caso passadas:
+```js
+// exemplo de useCase que utiliza userId como parametro
+// obtemos o userId de dentro de request.user.sub como dito anteriormente
+
+const { user } = await getUserProfileUseCase.execute({
+        userId: request.user.sub
+    })
+```
+
+## Test Environment - End2End
+
+Para não utilizarmos as tabelas originais do banco de dados para realizar testes e deixa-las poluídas, precisamos criar um ambiente limpo para cada teste E2E.
+
+Primeiro, criamos uma pasta aonde preferir (./src, ./prisma) com o nome de `vitest-environment-{environmentName}`. No nosso caso, criamos `vitest-environment-prisma`.
+
+Dentro dessa pasta criamos um arquivo `.ts` que pode ter qualquer nome. Nesse arquivo vamos configuar o environment que estamos criando para testes.
+
+Criamos um objeto do tipo `Environment` do `vitest/environments` com os atributos:
+- name: `prisma`,
+- transformMode: `ssr` (ssr para backend e codigo rodando direto do node),
+- async setup(): função que irá ser executada ao iniciar os testes nesse `environment`, serve pra preparar o ambiente,
+- return:
+  - async teardown() {}: função que será executada ao final dos testes, serve para limpar o ambiente.
+
+```js
+import { PrismaClient } from "@prisma/client";
+import { randomUUID } from 'node:crypto';
+import { Environment } from 'vitest/environments';
+
+const prisma = new PrismaClient()
+const prismaEnvironment: Environment = {
+    name: 'prisma',
+    transformMode: 'ssr', // ou 'web', dependendo do seu caso
+    async setup() {
+      //...
+        return {
+            async teardown() {//...},
+        };
+    },
+};
+export default prismaEnvironment;
+```
+
+### setup() 
+
+Existem diversas formas de criar um ambiente novo e limpo para cada teste E2E. Nesse caso, vamos criar um `schema` do PostgreSQL no nosso banco de dados para cada conjunto de testes.
+
+Na `DATABASE_URL` do Postgres temos uma searchParam que define o nome do `schema`, que por padrão é o **public**.
+
+Vamos alterar esse URL criando um novo schema aleatório com `randomUUID()` e executando as migrations nesse novo schema. Uma função personalizada é utilizada para manipular a URL: 
+
+```js
+
+function generateDatabaseURL(schema: string) {
+  // funcao procura dentro do .env uma variavel DATABASE_URL, se não encontra da erro
+    if(!process.env.DATABASE_URL) {
+        throw new Error('Pleas provide a DATABASE_URL environment variable.')
+    }
+
+    //cria um novo objeto URL a partir da variavel DATABASE_URL
+    //acessa o searchParams da URL e altera pelo schema recebido como parametro
+    const url = new URL(process.env.DATABASE_URL)
+    url.searchParams.set('schema', schema)
+
+    //devolve a URL em formato string
+    return url.toString()
+}
+
+async setup() {
+
+        //gera um nome de schema com UUID
+        const schema = randomUUID()
+
+        //cria uma nova URL passando o schema gerado como parametro
+        const databaseURL = generateDatabaseURL(schema)
+
+        //define a variavel DATABASE_URL com o valor da nova URL
+        process.env.DATABASE_URL = databaseURL
+
+        //executa as migrations em deploy
+        //quando executamos com deploy, o prisma apenas executa as etapas criadas
+        /// das migrations definidas com o migrate dev
+        /// nao queremos que ele crie novas etapas, apenas que execute as definidas
+        /// por isso utilizamos o deploy
+        execSync('npx prisma migrate deploy')
+
+        return {
+          //...
+        };
+    }
+```
+
+Por fim, a função `setup()` retorna uma outra função, chamada de `teardown()`. Nela, desfazemos tudo que foi criado, para manter sempre o banco de dados limpo:
+
+```js
+  return {
+    async teardown() {
+
+        // dropa o schema criado durante o setup
+        //CASCADE para deletar tudo abaixo do schema
+        await prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`)
+
+        // fecha a conexao
+        await prisma.$disconnect()
+    },
+};
+```
+
+### vite.config.mts
+
+Precisamos adicionar uma configuração nesse arquivo, dessa forma ele entende que os testes de uma determinada pasta deverão utilizar nosso novo `enviroment`:
+
+Vamos adicionar o `environmentMatchGlobs` a configuração. Esse atributo recebe uma lista, que contém outra lista dentro, primeiro com o caminho da pasta de testes que queremos utilizar nosso novo environment, segundo a pasta que contem nosso environment customizado
+
+```js
+test: {
+  environmentMatchGlobs: [
+      ['src/http/controllers/**', './prisma/vitest-environment-prisma/prisma-test-environment.ts']
+  ],
+  // pasta que deve procurar por testes
+  dir: 'src',
+}
+```
+
+### Scripts
+
+Fizemos algumas alterações nos scripts para que eles executem o comando certo na pasta certa:
+
+```json
+    //testes unitarios serao os da pasta src/use-cases
+    "test": "vitest run --dir src/use-cases",
+    "test:watch": "vitest --dir src/use-cases",
+
+    //testes e2e são executados somenta na pasta src/http
+    //testes e2e sao demorados e nao queremos executar eles sempre
+    "test:e2e": "vitest run --dir src/http",
+```
+
+
+### Testes e2e
+
+Poucos testes e2e que vão do inicio ao fim e que testem as respostas positivas/sucesso de cada caso. Se formos criar
+testes pra cada possível falha, teremos muitos testes.
+
+Os testes unitários já cobrem as falhas por falta de informação ou informações enviadas erradas. Temos que tomar cuidado
+ao criar os testes e2e para não exagerar.

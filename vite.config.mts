@@ -10,6 +10,7 @@ export default defineConfig({
         environmentMatchGlobs: [
             ['src/http/controllers/**', './prisma/vitest-environment-prisma/prisma-test-environment.ts']
         ],
+        // pasta que deve procurar por testes
         dir: 'src',
     }
 })
