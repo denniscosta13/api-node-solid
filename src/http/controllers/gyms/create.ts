@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify"
 import { z } from "zod"
 import { makeGymUseCase } from "@/use-cases/factories/make-gym-use-case"
 
-export async function register(request: FastifyRequest, reply: FastifyReply)  {
+export async function create(request: FastifyRequest, reply: FastifyReply)  {
 
     //cria o schema que irá validar o objeto recebido pela request
     const createGymBodySchema = z.object({
