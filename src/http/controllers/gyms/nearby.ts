@@ -16,7 +16,7 @@ export async function nearby(request: FastifyRequest, reply: FastifyReply)  {
 
     //parse valida o request.body se está de acordo com nosso schema
     //caso nao esteja de acordo, joga um erro e para a aplicação
-    const { latitude, longitude } = nearbyGymsBodySchema.parse(request.body)
+    const { latitude, longitude } = nearbyGymsBodySchema.parse(request.query)
 
     
     const fetchNearbyGymsUseCase = makeFetchNearbyGymsUseCase()

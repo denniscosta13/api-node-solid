@@ -12,7 +12,7 @@ export async function search(request: FastifyRequest, reply: FastifyReply)  {
 
     //parse valida o request.body se está de acordo com nosso schema
     //caso nao esteja de acordo, joga um erro e para a aplicação
-    const { query, page } = searchGymBodySchema.parse(request.body)
+    const { query, page } = searchGymBodySchema.parse(request.query)
 
     
     const createGymUseCase = makeSearchGymsUseCase()
