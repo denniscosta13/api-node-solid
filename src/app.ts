@@ -4,6 +4,7 @@ import { gymsRoutes } from './http/controllers/gyms/routes'
 import { ZodError } from 'zod'
 import { env } from './env'
 import fastifyJwt from '@fastify/jwt'
+import { checkInsRoutes } from './http/controllers/checkins/routes'
 
 export const app = fastify()
 
@@ -18,6 +19,7 @@ app.register(fastifyJwt, {
 //por meio desse registro, nosso server ganha acesso as rotas definadas em routes.ts
 app.register(usersRoutes)
 app.register(gymsRoutes)
+app.register(checkInsRoutes)
 
 //o fastify tem uma função para tratar erros
 //ela consegue capturar o erro, request e reply

@@ -10,18 +10,20 @@ export async function create(request: FastifyRequest, reply: FastifyReply)  {
 
     //cria o schema que irá validar o objeto recebido pela request
     const createCheckInBodySchema = z.object({
-        userLatitude: z.number().refine(value => {
+        latitude: z.coerce.number().refine(value => {
             return Math.abs(value) <= 90
         }),
-        userLongitude: z.number().refine(value => {
+        longitude: z.coerce.number().refine(value => {
             return Math.abs(value) <= 180
         }),
     })
 
     //parse valida o request.body se está de acordo com nosso schema
     //caso nao esteja de acordo, joga um erro e para a aplicação
+    console.log(request.body);
+    
     const { gymId } = createCheckInParamsSchema.parse(request.params)
-    const { userLatitude, userLongitude } = createCheckInBodySchema.parse(request.body)
+    const { latitude, longitude } = createCheckInBodySchema.parse(request.body)
 
     
     const createGymUseCase = makeCheckInUseCase()
@@ -29,8 +31,8 @@ export async function create(request: FastifyRequest, reply: FastifyReply)  {
     await createGymUseCase.execute({ 
         userId: request.user.sub, 
         gymId, 
-        userLatitude,
-        userLongitude 
+        userLatitude: latitude,
+        userLongitude: longitude,
     })
     
 
