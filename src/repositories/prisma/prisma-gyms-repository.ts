@@ -43,7 +43,7 @@ export class PrismaGymsRepository implements GymsRepository {
                     * acos( 
                         cos( radians(${params.latitude})) 
                         * cos(radians(latitude)) 
-                        * cos(radians(longitude) - radians(${longitude}) ) 
+                        * cos(radians(longitude) - radians(${params.longitude}) ) 
                         + sin(radians(${params.latitude})) 
                         * sin(radians(latitude)) 
                     )
