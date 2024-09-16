@@ -20,7 +20,6 @@ export async function create(request: FastifyRequest, reply: FastifyReply)  {
 
     //parse valida o request.body se está de acordo com nosso schema
     //caso nao esteja de acordo, joga um erro e para a aplicação
-    console.log(request.body);
     
     const { gymId } = createCheckInParamsSchema.parse(request.params)
     const { latitude, longitude } = createCheckInBodySchema.parse(request.body)
