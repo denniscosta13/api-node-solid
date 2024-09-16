@@ -5,5 +5,11 @@ import tsconfigPaths from "vite-tsconfig-paths"
 //aqui definimos a config do Vitest, passando o tsconfigPaths como plugin
 //dessa forma o Vitest entende os caminhos de import customizados que criamos com '@\'
 export default defineConfig({
-    plugins: [tsconfigPaths()]
+    plugins: [tsconfigPaths()],
+    test: {
+        environmentMatchGlobs: [
+            ['src/http/controllers/**', './prisma/vitest-environment-prisma/prisma-test-environment.ts']
+        ],
+        dir: 'src',
+    }
 })
