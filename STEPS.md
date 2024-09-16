@@ -309,6 +309,25 @@ model User {
 }
 ```
 
+### queryRaw
+
+Quando queremos escrever uma query mais personalizada, podemos utilizar a propriedade
+`$queryRaw` do Prisma:
+
+```js
+await prisma.$queryRaw`SELECT * FROM table`
+```
+
+Como estamos utilizando uma query personalizada, o Prisma não consegue identificar
+qual é o retorno da query, por isso, podemos declarar o tipo de retorno inserindo ele
+entre os operadores de comparação `<` e `>`:
+
+```js
+await prisma.$queryRaw<T | T[]>`SELECT * FROM table`
+```
+
+Podendo ser o retorno um resultado único ou uma lista de vários valores.
+
 ## Controller
 
 Controller lida e manipula entrada de dados de request e da uma reposta.
