@@ -2,8 +2,16 @@ import fastify from 'fastify'
 import { appRoutes } from './http/routes' // importa a funcao appRoutes, plugin do fastify
 import { ZodError } from 'zod'
 import { env } from './env'
+import fastifyJwt from '@fastify/jwt'
 
 export const app = fastify()
+
+//antes das rotas, registramos o jwt do fastify passando o secret(palavra-chave) que servira para
+//assinatura do nosso token
+//esse token nós podemos salvar no .env e utilizar qualquer um para desenvolvimento
+app.register(fastifyJwt, {
+    secret: env.JWT_SECRET,
+})
 
 //registra o plugin contendo as rotas da nossa aplicacao
 //por meio desse registro, nosso server ganha acesso as rotas definadas em routes.ts

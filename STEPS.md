@@ -623,3 +623,96 @@ Desenvolver o minimo de código possível para passar no teste.
 ### Refactor
 
 Caso os testes alcancem o `green`, então nós refatoramos o código para melhor.
+
+## Autenticação
+
+### JWT
+
+JSON Web Token(JWT) é uma das maneiras mais comuns utilizadas para autenticação de forma segura.
+
+1. O Usuário faz login, enviando email e senha
+2. O back-end verifica se a senha criptografada corresponde coma senha daquele usuário
+3. Em caso afirmativo, o back-end cria um token **ÚNICO**, não modificável e `STATELESS`
+
+`STATELESS`: Não armazenado em nenhuma estrutura de persistência de dados (banco de dados)
+
+AO criar o token, o back-end utiliza uma *palavra-chave*, geralmente uma string. Essa palavra-chave, que só o back-end
+conhece, é utilizada para assinar o token tornando praticamente impossível de alterar ele para obter um acesso malicioso.
+
+O token é composto por: 
+- header: cabeçalho da requisição com as informações de criptografia e qual tecnologia do token
+- payload: informações adicionais, geralmente um `sub` com o id do usuário e outras informações necessárias
+- sign: palavra-chave utilizada pelo back-end
+
+Login => JWT
+JWT => Utilizado em todas as requisições (passado no header)
+
+`Authorization: Bearer Token`
+
+### Camadas da aplicação
+
+Tudo relacionado ao Token e Autenticação é utilizado nas camadas mais externas da aplicação, como os `controllers`,
+que fazem a ponte para o mundo externo através das rotas HTTP.
+
+Os **casos de uso** não devem implmentar nada relacionado a JWT, pois eles são a parte mais pura da lógica e regras de
+negócio da nossa aplicação.
+Dessa forma, blindamos a lógica dos métodos de entrada, tornando os casos de uso independentes. Eles se tornam independentes
+a partir do momento que não temos funcionalidades das camadas mais externas amarradas a eles. Portanto, o sistema pode
+ser integrado como API, integrado a um sistema interno de uma empresa, etc. Independente se vai fazer uma requisição HTTP
+ou se vai acessar diretamente os use-cases num sistema integrado.
+
+O importante aqui é separar o **core** da aplicação, que é sua lógica e regras de negócio do **use-cases**, das camadas
+externas de comunicação, seja pela internet ou outra forma.
+
+### Fastify
+
+O fastify tem um package de jwt que nos ajuda nesse processo:
+
+```sh
+npm i @fastify/jwt
+```
+
+Após isso, antes de registrar as rotas no `app.ts`, nós registramos o jwt:
+
+```js
+app.register(fastifyJwt, {
+    secret: env.JWT_SECRET,
+})
+```
+
+Além disso, ao instalarmos esse package, o request e reply ganham alguns métodos relacionados ao jwt, um deles
+serve para criar o token. Estamos utilizando ele na rota de autenticação. A rota faz a validação de senha, caso dê tudo
+certo, ela cria um token e o retorna no body da reply:
+
+```js
+
+//o primeiro parametro é o payload, podemos passar vazio ou com alguma info, aqui não tem o sub ainda
+//no segundo parametros passamos o sign que tem o sub dentro deles
+//NUNCA PASSAR SENHA NO PAYLOAD - o corpo do JWT é apenas encodado e não criptografado
+//isso tornal possível obter a senha apenas fazendo DECODE em base64
+//o que torna nosso token válido ou não é a palavra chave
+const token = await reply.jwtSign({}, {
+            sign: {
+                sub: user.id
+            }
+        })
+
+return reply.status(200).send({
+            token
+        })
+```
+
+### Env
+
+Como estamos lendo o secret do .env, precisamos declarar ele no `index.ts` da pasta `env`.
+No index, é feita a validação das nossas váriaveis de ambiente, o JWT_SECRET é uma variável obrigatória, pois sem ela
+não podemos criar os tokens, por isso adicionamos ela na validação do zod:
+
+```js
+const envSchema = z.object({
+    NODE_ENV: z.enum(['dev', 'test', 'production']).default('dev'),
+    JWT_SECRET: z.string(),
+    PORT: z.coerce.number().default(3333),
+})
+```
+
