@@ -4,6 +4,7 @@ import { gymsRoutes } from './http/controllers/gyms/routes'
 import { ZodError } from 'zod'
 import { env } from './env'
 import fastifyJwt from '@fastify/jwt'
+import fastifyCookie from '@fastify/cookie'
 import { checkInsRoutes } from './http/controllers/checkins/routes'
 
 export const app = fastify()
@@ -13,7 +14,16 @@ export const app = fastify()
 //esse token nós podemos salvar no .env e utilizar qualquer um para desenvolvimento
 app.register(fastifyJwt, {
     secret: env.JWT_SECRET,
+    cookie: {
+        cookieName: 'refreshToken',
+        signed: false,
+    },
+    sign: {
+        expiresIn: '10m'
+    }
 })
+
+app.register(fastifyCookie)
 
 //registra o plugin contendo as rotas da nossa aplicacao
 //por meio desse registro, nosso server ganha acesso as rotas definadas em routes.ts
